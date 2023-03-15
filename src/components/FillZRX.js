@@ -10,8 +10,6 @@ import { BigNumber } from "@0x/utils";
 function FillZRX({ value }) {
   const [error, setError] = useState("");
   async function fill() {
-    // console.log("skns");
-    // let signedOrder;
     try {
       setError("");
       const CHAIN_ID = 137;

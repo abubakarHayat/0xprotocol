@@ -7,20 +7,6 @@ import { MetamaskSubprovider } from "@0x/subproviders";
  * Component to sign and submit a 0x limit order
  */
 
-/**
- * Polygon test tokens:
- * Long: 0xc03ce38bc55836a4ef61ab570253cd7bfff3af44 (used as makerToken)
- * Short: 0x9d2c22ec4cd2aa908a653d89acb4127916d64ed0 (used as takerToken)
- * Tx hash: 0x8b817b46662a440ed9a2be621e2a38ae33940ac20e6cc1b131fe70db95db1178
- * USDC: 0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174
- */
-
-/**
- * Ropsten test tokens:
- * Option: 0x32de47Fc9bc48F4c56f9649440532081466036A2 (used as makerToken)
- * DAI: 0xad6d458402f60fd3bd25163575031acdce07538d (used as takerToken)
- */
-
 function SignZRX() {
   const [sellAmount, setSellAmount] = useState("");
   const [buyAmount, setBuyAmount] = useState("");
@@ -66,15 +52,7 @@ function SignZRX() {
         feeRecipient: "0x0000000000000000000000000000000000000000",
       });
 
-      // BUY 1 LONG -> 1000000000000000000 (integer representation of 1 full unit of LONG token with 18 decimals)
-      // FOR 0.2 USDC -> 200000
-
-      // 100 LONG
-      // 20 USDC
-
-      const supportedProvider = new MetamaskSubprovider(
-        window.web3.currentProvider
-      );
+      const supportedProvider = new MetamaskSubprovider(window.ethereum);
 
       // Sign order conforming to the EIP712 standard
       const signature = await order.getSignatureWithProviderAsync(
@@ -83,25 +61,8 @@ function SignZRX() {
       );
       console.log(`Signature: ${JSON.stringify(signature, undefined, 2)}`);
 
-      // Alternative way to sign an order using MetamaskSubprovider from @0x/subprovider package (requires installation of that package)
-      // const { MetamaskSubprovider } = require("@0x/subproviders");
-      // const provider = new MetamaskSubprovider(window.ethereum);
-      // const signature = await order.getSignatureWithProviderAsync(
-      //     provider, // using MetaMask provider assuming the wallet is installed and connected. Wallet connect logic is handled in WalletConnectButton component
-      //     utils.SignatureType.EIP712 // Optional
-      // );
-
       // Append signature object to order object for the post of the order
       const signedOrder = { ...order, signature };
-      //console.log(signedOrder);
-      // Post order to the Standard Relayer API (SRA)
-      // const resp = await fetch("https://polygon.api.0x.org/sra/v4/order", {
-      //     method: "POST",
-      //     body: JSON.stringify(signedOrder),
-      //     headers: {
-      //         "Content-Type": "application/json"
-      //     }
-      // });
 
       const resp = await fetch(
         "https://polygon.api.0x.org/orderbook/v1/order",
